@@ -18,8 +18,9 @@ public class Sequence {
 
 
     public static void main(String[] args) {
-        var seq = new Sequence("ATTGCGTGA");
-        seq.monoReadingFrameSearch(1);
+        var seq = new Sequence("ATTGCGTGAAAA");
+//        seq.FindORFs();
+        seq.monoReadingFrameSearch(-3);
         System.out.println(seq.getORFs());
     }
 
@@ -49,15 +50,17 @@ public class Sequence {
         // Checks for ORF's in the this.seq instance variable. Every hit is added to the internal ORF's list as an
         // instance of the ORF class.
         for (int offset = -3; offset < 3; offset++) {
+            if (offset == 0){continue;}
 
-
-            for (int i = 0; i < seq.length()+offset; i++) {
-                // TODO: Create multi reading frame finder
-            }
+            monoReadingFrameSearch(offset);
 
         }
     }
 
+    private boolean stopSearch(int i, int seqLength, int sign){
+        if (sign == 1){return i < seqLength;}
+        return i >= 0;
+    }
 
     private void monoReadingFrameSearch(int readingFrame) {
         if (3 < readingFrame || readingFrame < -3 || readingFrame == 0) {
@@ -66,26 +69,60 @@ public class Sequence {
 
         int seqLength = seq.length();
         int sign = readingFrame > 0 ? 1 : -1;
-        int start_index = readingFrame > 0 ? readingFrame-1 : seqLength+readingFrame+1;
+        int start_index = readingFrame > 0 ? readingFrame-1 : seqLength+readingFrame;
+
+        if (sign == 1){
+            FrameSearch(start_index, seqLength);
+        }
+        else{
+            FrameSearchReverse(start_index);
+        }
 
 
-        int startPosition = 0; // Setting the start position of the first ORF
+    }
+
+    private void FrameSearch(int start_index, int seqLength) {
+
+        int startPosition = start_index+1; // Setting the start position of the first ORF
         int codonEndPosition = 0; // Setting the default end position
-        for (int i = start_index; i < (sign * seqLength); i+=sign*3) {
-            codonEndPosition = i + (3 * sign);
-            System.out.println(codonEndPosition);
+        String currentCodon = "N/A";
+        for (int i = start_index; i < seqLength; i+=3) {
+            codonEndPosition = i + 3;
 
-            String currentCodon = seq.substring(i, codonEndPosition);
+            try{currentCodon = seq.substring(codonEndPosition, i);}
+            catch (StringIndexOutOfBoundsException e){
+                break;
+            }
 
             if (STOP_CODONS.contains(currentCodon)) {
                 // The current ORF has ended
                 ORFs.add(new ORF(startPosition, codonEndPosition));
-                startPosition = codonEndPosition + sign; // Setting the start position of the next ORF
+                startPosition = codonEndPosition-1; // Setting the start position of the next ORF
             }
         }
-        // Loop has ended
-        // Final ORF gets added
-        ORFs.add(new ORF(startPosition, codonEndPosition));
+
+    }
+
+
+    private void FrameSearchReverse(int start_index){
+
+        int startPosition = start_index+1; // Setting the start position of the first ORF
+        int codonEndPosition = 0; // Setting the default end position
+        String currentCodon = "N/A";
+        for (int i = start_index; i > 0; i-=3) {
+            codonEndPosition = i - 3;
+
+            try{currentCodon = new StringBuilder(seq.substring(codonEndPosition, i)).reverse().toString();}
+            catch (StringIndexOutOfBoundsException e){
+                break;
+            }
+
+            if (STOP_CODONS.contains(currentCodon)) {
+                // The current ORF has ended
+                ORFs.add(new ORF(startPosition, codonEndPosition));
+                startPosition = codonEndPosition-1; // Setting the start position of the next ORF
+            }
+        }
     }
 
     protected List<ORF> getORFs(){
