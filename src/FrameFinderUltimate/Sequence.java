@@ -1,3 +1,5 @@
+package FrameFinderUltimate;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -35,7 +37,6 @@ public class Sequence {
         if (matcher.matches()){
             this.seq = seq;
         }
-
     }
 
     /** Returns the value of the internal sequence.

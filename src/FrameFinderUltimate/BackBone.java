@@ -16,6 +16,14 @@ public class BackBone {
     static String saveFilePath;
 
     protected static void extractSequence() throws IOException {
+    static List<ORF> ORFs;
+    static HashMap<String, String> parameters;
+    static String fileContent;
+    static String nucSequence;
+    static String inputFilePath;
+    static String saveFilePath;
+
+    private static void extractSequence() throws IOException {
         inputFilePath = FileHandling.selectInputFile();
         // Sets the this.inputFilePath to the chosen file path.
         fileContent = FileHandling.retrieveData();
