@@ -4,7 +4,7 @@ import javax.swing.*;
 import java.io.*;
 
 public class FileHandling {
-    protected String selectInputFile() {
+    protected static String selectInputFile() {
         // Opens a dialog window for the user to choose which file they want as input.
         JFileChooser j = new JFileChooser();
         int option = j.showOpenDialog(null);
