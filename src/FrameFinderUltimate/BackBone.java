@@ -18,19 +18,7 @@ public class BackBone {
     private static void extractSequence() throws IOException {
         inputFilePath = FileHandling.selectInputFile();
         // Sets the this.inputFilePath to the chosen file path.
-        String line;
-        StringBuilder builder = new StringBuilder();
-        BufferedReader inFile = null;
-        if (inputFilePath != null) {
-            inFile = new BufferedReader(new FileReader(inputFilePath));
-        }
-        inFile.readLine();
-        // Reads the header to move onto the sequence.
-        while ((line = inFile.readLine()) != null) {
-            builder.append(line).append("\n");
-        }
-        // Builds a string by adding each line of the file.
-        nucSequence = builder.toString();
-        // Sets the value of this.nucSequence to the sequence extracted out of this.fileContent.
+        fileContent = FileHandling.retrieveData();
+        // Retrieves the sequences from the chosen input file
     }
 }
