@@ -1,7 +1,7 @@
+package FrameFinderUltimate;
+
 import javax.swing.*;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 
 public class FileHandling {
     protected String selectInputFile() {
@@ -16,7 +16,7 @@ public class FileHandling {
         return null;
     }
 
-    protected String selectOutputFile(){
+    protected static String selectOutputFile(){
         // Opens a dialog window for the user to choose where they want to write the output of the program to.
         JFileChooser j = new JFileChooser();
         int option = j.showSaveDialog(null);
@@ -28,13 +28,23 @@ public class FileHandling {
         return null;
     }
 
-    protected String retrieveData(){
-        // Returns the data stored inside the input file.
-        return "";
+    protected static String retrieveData() throws IOException{
+        StringBuilder sb = new StringBuilder();
+
+        File inputFile = new File(BackBone.inputFilePath);
+        try (BufferedReader br = new BufferedReader(new FileReader(BackBone.inputFilePath))) {
+            while (true){
+                String line = br.readLine();
+                if (line == null){break;}
+
+                sb.append(line);
+            }
+            return sb.toString();
+        }
     }
 
 
-    protected void saveData(String data) throws IOException {
+    protected static void saveData(String data) throws IOException {
         // Writes the data to an already specified output file.
         FileWriter saveFile = new FileWriter(BackBone.saveFilePath);
         saveFile.write(data);
