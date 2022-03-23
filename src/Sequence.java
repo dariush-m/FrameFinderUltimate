@@ -35,7 +35,6 @@ public class Sequence {
         if (matcher.matches()){
             this.seq = seq;
         }
-
     }
 
     /** Returns the value of the internal sequence.
