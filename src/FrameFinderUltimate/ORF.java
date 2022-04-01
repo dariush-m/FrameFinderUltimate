@@ -1,4 +1,4 @@
 package FrameFinderUltimate;
 
-public record ORF(int start, int stop) {
+public record ORF(String seq) {
 }
