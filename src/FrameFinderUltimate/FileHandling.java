@@ -31,7 +31,6 @@ public class FileHandling {
     protected static String retrieveData() throws IOException{
         StringBuilder sb = new StringBuilder();
 
-        File inputFile = new File(BackBone.inputFilePath);
         try (BufferedReader br = new BufferedReader(new FileReader(BackBone.inputFilePath))) {
             while (true){
                 String line = br.readLine();
@@ -44,9 +43,14 @@ public class FileHandling {
     }
 
 
-    protected static void saveData(String data) throws IOException {
+    protected static void saveData() throws IOException {
         // Writes the data to an already specified output file.
         FileWriter saveFile = new FileWriter(BackBone.saveFilePath);
-        saveFile.write(data);
+        for (ORF orf:
+             BackBone.ORFs) {
+            saveFile.write(orf.seq()+"\n");
+        }
+        saveFile.close();
+
     }
 }

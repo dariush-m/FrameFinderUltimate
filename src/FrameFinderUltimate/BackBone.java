@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class BackBone {
-    //    static List<ORF> ORFs;
+    static List<ORF> ORFs;
     static HashMap<String, String> parameters;
     static String fileContent;
     static Sequence nucSequence;
@@ -21,8 +21,9 @@ public class BackBone {
     protected static void analyse() throws IOException{
         extractSequence();
         nucSequence.FindORFs();
-        var x = nucSequence.getORFs();
-        System.out.println(x);
+        ORFs = nucSequence.getORFs();
+        FileHandling.saveData();
+        BLAST.blastORFs(ORFs);
 
     }
 
@@ -32,6 +33,7 @@ public class BackBone {
         // Retrieves the sequences from the chosen input file
         nucSequence = new Sequence(fileContent);
     }
+
 
     protected static void setInput(){
         inputFilePath = FileHandling.selectInputFile();
@@ -52,9 +54,6 @@ public class BackBone {
         nucSequence = new Sequence(fileContent);
     }
 
-    protected static void setParameters(){
-        parameters.put("test", "test");
-    }
 
 
     public static void main(String[] args) {

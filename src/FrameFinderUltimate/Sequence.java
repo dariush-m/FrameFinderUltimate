@@ -1,9 +1,11 @@
 package FrameFinderUltimate;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 public class Sequence {
     static private final Pattern VALID_BASES = Pattern.compile("[ATGC]+");
@@ -50,7 +52,7 @@ public class Sequence {
     protected void FindORFs(){
         // Checks for ORF's in the this.seq instance variable. Every hit is added to the internal ORF's list as an
         // instance of the ORF class.
-        for (int offset = -3; offset < 3; offset++) {
+        for (int offset = -3; offset <= 3; offset++) {
             if (offset == 0){continue;}
 
             monoReadingFrameSearch(offset);
@@ -77,7 +79,7 @@ public class Sequence {
 
     private void FrameSearch(int start_index, int seqLength) {
 
-        int startPosition = start_index+1; // Setting the start position of the first ORF
+        int startPosition = start_index; // Setting the start position of the first ORF
         int codonEndPosition = 0; // Setting the default end position
         String currentCodon;
         for (int i = start_index; i < seqLength; i+=3) {
@@ -90,11 +92,12 @@ public class Sequence {
 
             if (STOP_CODONS_FW.contains(currentCodon)) {
                 // The current ORF has ended
-                ORFs.add(new ORF(startPosition, codonEndPosition));
-                startPosition = codonEndPosition-1; // Setting the start position of the next ORF
+                ORFs.add(new ORF(seq.substring(startPosition, codonEndPosition)));
+                startPosition = i+3; // Setting the start position of the next ORF
             }
         }
-        if (startPosition != codonEndPosition && codonEndPosition <= seqLength){ORFs.add(new ORF(startPosition, codonEndPosition));}
+        if ((codonEndPosition - startPosition) > 1 && codonEndPosition > seqLength){ORFs.add(new ORF(seq.substring(startPosition, codonEndPosition-3)));}
+        if ((codonEndPosition - startPosition) > 1 && codonEndPosition <= seqLength){ORFs.add(new ORF(seq.substring(startPosition, codonEndPosition)));}
     }
 
 
@@ -113,11 +116,21 @@ public class Sequence {
 
             if (STOP_CODONS_RV.contains(currentCodon)) {
                 // The current ORF has ended
-                ORFs.add(new ORF(startPosition, codonEndPosition));
-                startPosition = codonEndPosition-1; // Setting the start position of the next ORF
+                String orf_seq = reverseString(seq.substring(codonEndPosition, startPosition));
+
+                ORFs.add(new ORF(orf_seq));
+                startPosition = i-3; // Setting the start position of the next ORF
             }
         }
-        if (startPosition != codonEndPosition && codonEndPosition >= 0){ORFs.add(new ORF(startPosition, codonEndPosition));}
+        if ((startPosition - codonEndPosition) > 1 && codonEndPosition < 0){ORFs.add(new ORF(reverseString(seq.substring(codonEndPosition+3, startPosition))));}
+        if ((startPosition - codonEndPosition) > 1 && codonEndPosition >= 0){ORFs.add(new ORF(reverseString(seq.substring(codonEndPosition, startPosition))));}
+    }
+
+    private String reverseString(String str){
+        var buff = new StringBuilder();
+        buff.append(str);
+        buff.reverse();
+        return buff.toString();
     }
 
     protected List<ORF> getORFs(){
